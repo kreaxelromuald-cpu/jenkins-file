@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    // Déclenchement automatique : vérifie le dépôt Git chaque minute
+    // (à décocher/désactiver après les tests — cf. page 99 du cours)
+    triggers {
+        pollSCM('* * * * *')
+    }
+
+    stages {
+
+        // Étape 1 : Récupération du code source depuis Git
+        stage('Checkout Git') {
+            steps {
+                echo '=== Récupération du code source depuis Git ==='
+                git branch: 'main',
+                    url: 'https://github.com/VOTRE_COMPTE/VOTRE_REPO.git'
+                // Si le repository est privé, ajouter :
+                // credentialsId: 'VOTRE_ID_CREDENTIALS'
+            }
+        }
+
+        // Étape 2 : Affichage de la date système
+        stage('Affichage de la date') {
+            steps {
+                echo '=== Affichage de la date système ==='
+                sh 'date'
+                echo "Date affichée avec succès ✅"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Pipeline terminé avec succès.'
+        }
+        failure {
+            echo '❌ Le pipeline a échoué.'
+        }
+    }
+}
